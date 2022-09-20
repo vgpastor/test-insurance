@@ -1,0 +1,2 @@
+- Understand the xml output and the different fields.
+- 
