@@ -2,8 +2,6 @@
 
 namespace App\Business\Enum;
 
-use ValueError;
-
 enum Fuel: string
 {
     case GASOLINE = 'gasoline';
@@ -12,16 +10,12 @@ enum Fuel: string
 
     public static function tryFromName(string $name): self|null
     {
-        try {
-            return match ($name) {
-                'Gasolina' => self::GASOLINE,
-                'Diesel' => self::DIESEL,
-                'Eléctrico' => self::ELECTRIC,
-                default => self::tryFrom($name),
-            };
-        } catch (ValueError $error) {
-            return null;
-        }
+        return match ($name) {
+            'Gasolina' => self::GASOLINE,
+            'Diesel' => self::DIESEL,
+            'Eléctrico' => self::ELECTRIC,
+            default => self::tryFrom($name),
+        };
     }
 
     public static function isValid(string $fuel): bool

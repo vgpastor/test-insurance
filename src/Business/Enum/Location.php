@@ -12,11 +12,11 @@ enum Location: string
 
     public static function tryFromName(string $name): self|null
     {
-        try {
-            return self::tryFrom($name);
-        } catch (ValueError $error) {
-            return null;
-        }
+        return self::tryFrom($name);
     }
 
+    public static function isValid(string $fuel): bool
+    {
+        return null !== self::tryFromName($fuel);
+    }
 }

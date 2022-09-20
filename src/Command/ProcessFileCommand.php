@@ -19,11 +19,15 @@ class ProcessFileCommand extends Command
 {
     private RequestDataTransformer $requestDataTransformer;
 
+    private GlobalTransformer $globalTransformer;
+
     public function __construct(RequestDataTransformer $requestDataTransformer, GlobalTransformer $globalTransformer)
     {
         parent::__construct();
         $this->requestDataTransformer = $requestDataTransformer;
+        $this->globalTransformer = $globalTransformer;
     }
+
     protected function configure(): void
     {
         $this
@@ -39,7 +43,7 @@ class ProcessFileCommand extends Command
 
         if (!$arg1 || !file_exists(getcwd().'\\'.$arg1)) {
             $io->error(sprintf('File invalid: %s', $arg1));
-
+            var_dump(getcwd().'\\'.$arg1);
             return Command::INVALID;
         }
 
@@ -62,8 +66,11 @@ class ProcessFileCommand extends Command
 
         $requestData = $this->requestDataTransformer->transform($data);
 
-        $result = file_get_contents(__DIR__.'\\..\\..\\tests\\demoOutput.xml');
-        $io->success($result);
+        $response = $this->globalTransformer->transform($requestData, $destination);
+        $io->success($response->getData());
+
+//        $result = file_get_contents(__DIR__.'\\..\\..\\tests\\demoOutput.xml');
+//        $io->success($result);
 
         return Command::SUCCESS;
     }

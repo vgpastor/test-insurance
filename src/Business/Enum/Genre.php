@@ -2,8 +2,6 @@
 
 namespace App\Business\Enum;
 
-use ValueError;
-
 enum Genre: string
 {
     case MAN = 'MAN';
@@ -11,23 +9,20 @@ enum Genre: string
 
     public static function fromName(string $name): ?self
     {
-        try {
-            return match (strtoupper($name)) {
-                'HOMBRE' => self::MAN,
-                'MUJER' => self::WOMAN,
-                default => self::tryFrom($name),
-            };
-        } catch (ValueError $error) {
-            return null;
-        }
+        return match (strtoupper($name)) {
+            'HOMBRE' => self::MAN,
+            'MUJER' => self::WOMAN,
+            default => self::tryFrom($name),
+        };
     }
 
     public static function tryFromName(string $name): ?self
     {
-        try {
-            return self::fromName($name);
-        } catch (ValueError $error) {
-            return null;
-        }
+        return self::fromName($name);
+    }
+
+    public static function isValid(string $fuel): bool
+    {
+        return null !== self::tryFromName($fuel);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Business;
 
+use App\Business\Enum\Genre;
+use App\Business\Enum\Location;
 use App\Business\Model\RequestCar;
 use App\Business\Model\RequestDriver;
 use App\Business\Model\RequestFields;
@@ -9,7 +11,7 @@ use App\Business\Model\RequestFields;
 class RequestDataTransformer
 {
     /**
-     * @var array<string,string> $originalData
+     * @var array<string,string>
      */
     private array $originalData;
 
@@ -17,6 +19,7 @@ class RequestDataTransformer
 
     /**
      * @param array<string,string> $originalData
+     *
      * @throws InputDataException
      */
     public function transform(array $originalData): RequestFields
@@ -53,10 +56,20 @@ class RequestDataTransformer
     /**
      * @throws InputDataException
      */
-    private function validateDriver()
+    private function validateDriver(): void
     {
         $requiredFields = ['driver_birthDate', 'driver_birthPlace', 'driver_birthPlaceMain', 'driver_children', 'driver_sex'];
         $this->verifyRequiredFields($requiredFields);
+
+        if (!Location::isValid($this->originalData['driver_birthPlace'])) {
+            throw new InputDataException('driver_birthPlace', 'Birth place is not valid');
+        }
+        if (!Location::isValid($this->originalData['driver_birthPlaceMain'])) {
+            throw new InputDataException('driver_birthPlaceMain', 'Birth place Main is not valid');
+        }
+        if (!Genre::isValid($this->originalData['driver_sex'])) {
+            throw new InputDataException('driver_sex', 'Driver Sex is not valid');
+        }
 
         $driver = new RequestDriver(
             $this->originalData['driver_birthDate'],
@@ -69,6 +82,11 @@ class RequestDataTransformer
         $this->requestFields->setDriver($driver);
     }
 
+    /**
+     * @param array<string> $requiredFields
+     *
+     * @throws InputDataException
+     */
     private function verifyRequiredFields(array $requiredFields): void
     {
         // Verify that requiredFileds are present and contains data

@@ -20,7 +20,7 @@ class ProcessFileCommandTest extends KernelTestCase
         $command = $application->find('app:process-file');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            'file' => '../demoData1.json',
+            'file' => 'tests/demoData1.json',
         ]);
         $commandTester->assertCommandIsSuccessful();
 

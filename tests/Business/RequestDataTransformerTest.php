@@ -74,6 +74,18 @@ class RequestDataTransformerTest extends TestCase
         }
     }
 
+    public function testLocation(): void
+    {
+        $this->originalData['driver_birthPlace'] = 'Marte';
+        try {
+            (new RequestDataTransformer())->transform($this->originalData);
+            $this->fail('Exception not thrown');
+        } catch (InputDataException $e) {
+            $this->assertEquals('driver_birthPlace', $e->getField());
+            $this->assertStringContainsString('is not valid', $e->getMessage());
+        }
+    }
+
     public function testCarMissingField(): void
     {
         unset($this->originalData['car_brand']);
