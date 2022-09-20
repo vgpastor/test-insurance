@@ -17,7 +17,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class ProcessFileCommand extends Command
 {
+    private RequestDataTransformer $requestDataTransformer;
 
+    public function __construct(RequestDataTransformer $requestDataTransformer, GlobalTransformer $globalTransformer)
+    {
+        parent::__construct();
+        $this->requestDataTransformer = $requestDataTransformer;
+    }
     protected function configure(): void
     {
         $this
@@ -44,6 +50,9 @@ class ProcessFileCommand extends Command
 
         $fileData = file_get_contents(getcwd().'\\'.$arg1);
         try {
+            if (false === $fileData) {
+                throw new \RuntimeException('File not found');
+            }
             $data = json_decode($fileData, true, 512, JSON_THROW_ON_ERROR);
         } catch (\Exception $e) {
             $io->error(sprintf('File JSON format invalid'));
@@ -51,6 +60,7 @@ class ProcessFileCommand extends Command
             return Command::INVALID;
         }
 
+        $requestData = $this->requestDataTransformer->transform($data);
 
         $result = file_get_contents(__DIR__.'\\..\\..\\tests\\demoOutput.xml');
         $io->success($result);
